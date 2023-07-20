@@ -2,29 +2,23 @@ package com.nelcael.minhasfinancas.model.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Objects;
-
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
 import org.hibernate.annotations.ManyToAny;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
+
+import com.nelcael.minhasfinancas.model.enuns.StatusLancamento;
+import com.nelcael.minhasfinancas.model.enuns.TipoLancamento;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.JoinColumn;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 @Entity
 @Table(name = "lancamento", schema="financas")

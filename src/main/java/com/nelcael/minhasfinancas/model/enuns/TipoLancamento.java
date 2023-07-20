@@ -1,4 +1,4 @@
-package com.nelcael.minhasfinancas.model.entity;
+package com.nelcael.minhasfinancas.model.enuns;
 
 public enum TipoLancamento {
 	RECEITA,
