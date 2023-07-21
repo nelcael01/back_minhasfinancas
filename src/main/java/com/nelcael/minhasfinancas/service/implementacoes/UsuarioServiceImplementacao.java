@@ -1,13 +1,18 @@
 package com.nelcael.minhasfinancas.service.implementacoes;
 
+import com.nelcael.minhasfinancas.exceptions.RegraNegocioException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import com.nelcael.minhasfinancas.model.entity.Usuario;
 import com.nelcael.minhasfinancas.model.repository.UsuarioRespository;
 import com.nelcael.minhasfinancas.service.UsuarioService;
 
+@Service
 public class UsuarioServiceImplementacao implements UsuarioService{
 
 	private UsuarioRespository repository;
 	
+	@Autowired
 	public UsuarioServiceImplementacao(UsuarioRespository repository) {
 		super();
 		this.repository = repository;
@@ -27,8 +32,10 @@ public class UsuarioServiceImplementacao implements UsuarioService{
 
 	@Override
 	public void validarEmail(String email) {
-		// TODO Auto-generated method stub
-		
+		boolean existe = repository.existByEmail(email);
+		if (existe){
+			throw new RegraNegocioException("Já existe um usuário cadastrado com esse e-mail.");
+		}
 	}
 	
 }
