@@ -1,13 +1,17 @@
 package com.nelcael.minhasfinancas.model.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "usuario", schema = "financas ")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class Usuario {
 
