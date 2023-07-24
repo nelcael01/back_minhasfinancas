@@ -33,4 +33,14 @@ public class UsuarioServiceTest {
         service.validarEmail(usuario.getEmail());
     }
 
+//    @Test(expected = RegraNegocioException.class)
+//    public void naoDeveSalvarUsuarioPorJaTerEmailCadastrado(){
+//        Usuario usuario = Usuario.builder().nome("usuario").email("usuario@email.com").build();
+//        repository.save(usuario);
+//
+//        Usuario usuario2 = Usuario.builder().nome("usuario").email("usuario@email.com").build();
+//        repository.save(usuario2);
+//    }
+
+
 }
