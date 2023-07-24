@@ -11,6 +11,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Optional;
+
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
 @DataJpaTest
@@ -25,7 +27,7 @@ public class UsuarioRepositoryTest {
     @Test
     public void deveVerificarAExistenciaDeUmEmail() {
         //Cenário
-        Usuario usuario = Usuario.builder().nome("usuario").email("usuario@email.com").build();
+        Usuario usuario = criarUsuario();
         entityManager.persist(usuario);
 
         //Ação
@@ -36,7 +38,7 @@ public class UsuarioRepositoryTest {
     }
 
     @Test
-    public void deveRetonarFalsoQuandoNaoHouverUsuarioCadastroComOEmail(){
+    public void deveRetonarFalsoQuandoNaoHouverUsuarioCadastroComOEmail() {
         //Ação
         boolean result = respository.existsByEmail("usuario@email.com");
 
@@ -44,5 +46,34 @@ public class UsuarioRepositoryTest {
         Assertions.assertThat(result).isFalse();
     }
 
+    @Test
+    public void devePersistirUmUsuarioNaBaseDeDados() {
+        Usuario usuario = criarUsuario();
+        Usuario usuarioSalvo = respository.save(usuario);
+        Assertions.assertThat(usuarioSalvo.getId()).isNotNull();
+    }
+
+    @Test
+    public void deveBuscarUmUsuarioPorEmail() {
+        Usuario usuario = criarUsuario();
+        entityManager.persist(usuario);
+        Optional<Usuario> usuarioBuscado = respository.findByEmail(usuario.getEmail());
+        Assertions.assertThat(usuarioBuscado.isPresent()).isTrue();
+    }
+
+    @Test
+    public void deveRetonarVazioQuandoNaoExisteUsuarioNaBaseNaBuscaPorEmail() {
+        Optional<Usuario> usuarioBuscado = respository.findByEmail("outro@gmail.com");
+        Assertions.assertThat(usuarioBuscado.isPresent()).isFalse();
+    }
+
+    public static Usuario criarUsuario() {
+        return Usuario
+                .builder()
+                .nome("usuario")
+                .email("usuario@email.com")
+                .senha("senha")
+                .build();
+    }
 
 }
