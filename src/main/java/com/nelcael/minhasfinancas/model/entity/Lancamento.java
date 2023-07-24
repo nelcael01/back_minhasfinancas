@@ -2,22 +2,15 @@ package com.nelcael.minhasfinancas.model.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+
 import org.hibernate.annotations.ManyToAny;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
 import com.nelcael.minhasfinancas.model.enuns.StatusLancamento;
 import com.nelcael.minhasfinancas.model.enuns.TipoLancamento;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.JoinColumn;
+
 import lombok.Data;
 
 @Entity
@@ -39,7 +32,7 @@ public class Lancamento {
 	@Column(name = "descricao")
 	private String descricao;
 	
-	@ManyToAny
+	@ManyToOne
 	@JoinColumn(name = "id_usuario")
 	private Usuario usuario;
 	
