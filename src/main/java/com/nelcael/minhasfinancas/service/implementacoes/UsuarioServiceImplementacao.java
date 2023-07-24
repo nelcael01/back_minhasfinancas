@@ -1,5 +1,6 @@
 package com.nelcael.minhasfinancas.service.implementacoes;
 
+import com.nelcael.minhasfinancas.exceptions.ErroAutenticacao;
 import com.nelcael.minhasfinancas.exceptions.RegraNegocioException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -7,6 +8,8 @@ import com.nelcael.minhasfinancas.model.entity.Usuario;
 import com.nelcael.minhasfinancas.model.repository.UsuarioRespository;
 import com.nelcael.minhasfinancas.service.UsuarioService;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 public class UsuarioServiceImplementacao implements UsuarioService {
@@ -20,8 +23,15 @@ public class UsuarioServiceImplementacao implements UsuarioService {
 
     @Override
     public Usuario autenticar(String email, String senha) {
-        // TODO Auto-generated method stub
-        return null;
+        Optional<Usuario> usuario = repository.findByEmail(email);
+        if (!usuario.isPresent()) {
+            throw new ErroAutenticacao("Esse e-mail não foi cadastrado");
+        }
+
+        if (!usuario.get().getSenha().equals(senha)) {
+            throw new ErroAutenticacao("A senha é inválida");
+        }
+        return usuario.get();
     }
 
     @Override
