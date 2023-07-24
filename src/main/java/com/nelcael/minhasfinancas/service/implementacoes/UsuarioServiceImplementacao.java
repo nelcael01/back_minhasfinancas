@@ -25,9 +25,10 @@ public class UsuarioServiceImplementacao implements UsuarioService {
     }
 
     @Override
+    @Transactional
     public Usuario salvarUsuario(Usuario usuario) {
-        // TODO Auto-generated method stub
-        return null;
+        validarEmail(usuario.getEmail());
+        return repository.save(usuario);
     }
 
     @Override
