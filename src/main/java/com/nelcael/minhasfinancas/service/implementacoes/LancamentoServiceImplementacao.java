@@ -4,9 +4,10 @@ import com.nelcael.minhasfinancas.model.entity.Lancamento;
 import com.nelcael.minhasfinancas.model.enuns.StatusLancamento;
 import com.nelcael.minhasfinancas.model.repository.LancamentoRepository;
 import com.nelcael.minhasfinancas.service.LancamentoService;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Objects;
 
@@ -14,9 +15,11 @@ import java.util.Objects;
 public class LancamentoServiceImplementacao implements LancamentoService {
 
     private LancamentoRepository repository;
-    public LancamentoServiceImplementacao(LancamentoRepository repository){
+
+    public LancamentoServiceImplementacao(LancamentoRepository repository) {
         this.repository = repository;
     }
+
     @Override
     @Transactional
     public Lancamento salvar(Lancamento lancamento) {
@@ -38,8 +41,13 @@ public class LancamentoServiceImplementacao implements LancamentoService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Lancamento> buscar(Lancamento lancamentoFiltro) {
-        return null;
+        Example example = Example.of(lancamentoFiltro,
+                ExampleMatcher.matching()
+                        .withIgnoreCase()
+                        .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING));
+        return repository.findAll(example);
     }
 
     @Override
