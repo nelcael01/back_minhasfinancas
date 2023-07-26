@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import javax.persistence.*;
 
+import lombok.Builder;
 import org.hibernate.annotations.ManyToAny;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
@@ -16,6 +17,7 @@ import lombok.Data;
 @Entity
 @Table(name = "lancamento", schema="financas")
 @Data
+@Builder
 public class Lancamento {
 
 	@Id
