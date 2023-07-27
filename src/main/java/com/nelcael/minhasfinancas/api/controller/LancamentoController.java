@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
+
 @RestController
 @RequestMapping("/api/lancamentos")
 public class LancamentoController {
@@ -50,6 +51,17 @@ public class LancamentoController {
                 return ResponseEntity.badRequest().body(e.getMessage());
             }
         }).orElseGet(() -> new ResponseEntity("Lançamento não encontrato na base", HttpStatus.BAD_REQUEST));
+    }
+
+    @DeleteMapping("{id}")
+    @Transactional
+    public ResponseEntity deletar(@PathVariable("id") Long id) {
+        return service.buscarPorId(id).map(entity -> {
+            service.deletar(entity);
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        }).orElseGet(() -> {
+            return new ResponseEntity("Lançamento não encontrado na base", HttpStatus.BAD_REQUEST);
+        });
     }
 
     private Lancamento converter(LancamentoDTO dto) {
