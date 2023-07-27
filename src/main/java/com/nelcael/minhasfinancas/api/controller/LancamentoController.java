@@ -1,5 +1,6 @@
 package com.nelcael.minhasfinancas.api.controller;
 
+import com.nelcael.minhasfinancas.api.dto.AtualizarStatusDTO;
 import com.nelcael.minhasfinancas.api.dto.LancamentoDTO;
 import com.nelcael.minhasfinancas.exceptions.RegraNegocioException;
 import com.nelcael.minhasfinancas.model.entity.Lancamento;
@@ -47,6 +48,24 @@ public class LancamentoController {
             }
         }).orElseGet(() -> new ResponseEntity("Lançamento não encontrato na base", HttpStatus.BAD_REQUEST));
     }
+
+    @PutMapping("{id}/atualizar-status")
+    public ResponseEntity atualizarStatus(@PathVariable("id") Long id ,@RequestBody AtualizarStatusDTO dto){
+        return service.buscarPorId(id).map(entity -> {
+            StatusLancamento statusSelecionado = StatusLancamento.valueOf(dto.getStatus());
+            if (statusSelecionado == null){
+                return ResponseEntity.badRequest().body("Status inválido");
+            }
+            try {
+                entity.setStatus(statusSelecionado);
+                service.atualizar(entity);
+                return new ResponseEntity(entity, HttpStatus.OK);
+            } catch (RegraNegocioException e) {
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
+        }).orElseGet(() -> new ResponseEntity("Lançamento não encontrato na base", HttpStatus.BAD_REQUEST));
+    }
+
 
     @DeleteMapping("{id}")
     public ResponseEntity deletar(@PathVariable("id") Long id) {
