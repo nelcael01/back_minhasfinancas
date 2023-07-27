@@ -8,28 +8,22 @@ import com.nelcael.minhasfinancas.model.enuns.StatusLancamento;
 import com.nelcael.minhasfinancas.model.enuns.TipoLancamento;
 import com.nelcael.minhasfinancas.service.LancamentoService;
 import com.nelcael.minhasfinancas.service.UsuarioService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
-
 import java.util.List;
 import java.util.Optional;
 
 
 @RestController
 @RequestMapping("/api/lancamentos")
+@RequiredArgsConstructor
 public class LancamentoController {
-    private LancamentoService service;
-    private UsuarioService usuarioService;
-
-    public LancamentoController(LancamentoService service) {
-        this.service = service;
-    }
+    private final LancamentoService service;
+    private final UsuarioService usuarioService;
 
     @PostMapping
-    @Transactional
     public ResponseEntity salvar(@RequestBody LancamentoDTO dto) {
         try {
             Lancamento entidade = converter(dto);
@@ -41,7 +35,6 @@ public class LancamentoController {
     }
 
     @PutMapping("{id}")
-    @Transactional
     public ResponseEntity atualizar(@PathVariable("id") Long id, @RequestBody LancamentoDTO dto) {
         return service.buscarPorId(id).map(entity -> {
             try {
@@ -56,7 +49,6 @@ public class LancamentoController {
     }
 
     @DeleteMapping("{id}")
-    @Transactional
     public ResponseEntity deletar(@PathVariable("id") Long id) {
         return service.buscarPorId(id).map(entity -> {
             service.deletar(entity);
@@ -79,9 +71,9 @@ public class LancamentoController {
         lancamentoFiltro.setAno(ano);
 
         Optional<Usuario> usuario = usuarioService.obterPorId(idUsuario);
-        if (!usuario.isPresent()){
+        if (!usuario.isPresent()) {
             return ResponseEntity.badRequest().body("Não foi possível realizar a consulta. Usuário não encontrado para o id informado");
-        }else {
+        } else {
             lancamentoFiltro.setUsuario(usuario.get());
         }
         List<Lancamento> listBuscados = service.buscar(lancamentoFiltro);
@@ -89,18 +81,24 @@ public class LancamentoController {
     }
 
     private Lancamento converter(LancamentoDTO dto) {
+        Lancamento lancamento = new Lancamento();
+        lancamento.setId(dto.getId());
+        lancamento.setDescricao(dto.getDescricao());
+        lancamento.setAno(dto.getAno());
+        lancamento.setMes(dto.getMes());
+        lancamento.setValor(dto.getValor());
+
         Usuario usuario = usuarioService.obterPorId(dto.getUsuario())
                 .orElseThrow(() -> new RegraNegocioException("Usuário não encontrado para o Id informado"));
-        Lancamento lancamento = Lancamento.builder()
-                .id(dto.getId())
-                .descricao(dto.getDescricao())
-                .mes(dto.getMes())
-                .ano(dto.getAno())
-                .valor(dto.getValor())
-                .usuario(usuario)
-                .tipo(TipoLancamento.valueOf(dto.getTipo()))
-                .status(StatusLancamento.valueOf(dto.getStatus()))
-                .build();
+        lancamento.setUsuario(usuario);
+
+        if (dto.getTipo() != null) {
+            lancamento.setTipo(TipoLancamento.valueOf(dto.getTipo()));
+        }
+
+        if (dto.getStatus() != null) {
+            lancamento.setStatus(StatusLancamento.valueOf(dto.getStatus()));
+        }
         return lancamento;
     }
 }

@@ -5,6 +5,7 @@ import com.nelcael.minhasfinancas.exceptions.ErroAutenticacao;
 import com.nelcael.minhasfinancas.exceptions.RegraNegocioException;
 import com.nelcael.minhasfinancas.model.entity.Usuario;
 import com.nelcael.minhasfinancas.service.UsuarioService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,12 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/usuarios")
+@RequiredArgsConstructor
 public class UsuarioController {
-    private UsuarioService service;
 
-    public UsuarioController(UsuarioService service) {
-        this.service = service;
-    }
+    private final UsuarioService service;
 
     @PostMapping
     public ResponseEntity salvar(@RequestBody UsuarioDTO dto) {
@@ -41,7 +40,7 @@ public class UsuarioController {
         try {
             Usuario usuarioAutenticado = service.autenticar(dto.getEmail(), dto.getSenha());
             return ResponseEntity.ok(usuarioAutenticado);
-        }catch (ErroAutenticacao e){
+        } catch (ErroAutenticacao e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
