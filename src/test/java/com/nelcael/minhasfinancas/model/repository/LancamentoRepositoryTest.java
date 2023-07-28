@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -29,17 +30,33 @@ public class LancamentoRepositoryTest {
 
     @Test
     public void deveSalvarUmLancamento(){
-        Lancamento lancamento = Lancamento.builder()
-                .ano(2019)
-                .mes(1)
-                .descricao("Lancamento qualquer")
-                .valor(BigDecimal.valueOf(10))
-                .tipo(TipoLancamento.RECEITA)
-                .status(StatusLancamento.PENDENTE)
-                .dataCadastro(LocalDate.now())
-                .build();
+        Lancamento lancamento = criarLancamento();
         lancamento = repository.save(lancamento);
         Assertions.assertThat(lancamento.getId()).isNotNull();
     }
+
+    @Test
+    public void deveDeletarUmLancamento(){
+        Lancamento lancamento = criarLancamento();
+        Lancamento lancamentoSalvo = entityManager.persist(lancamento);
+        lancamentoSalvo = entityManager.find(Lancamento.class, lancamentoSalvo.getId());
+        repository.delete(lancamentoSalvo);
+
+        Lancamento lancamentoInexistente = entityManager.find(Lancamento.class, lancamentoSalvo.getId());
+        Assertions.assertThat(lancamentoInexistente).isNull();
+    }
+
+     private Lancamento criarLancamento(){
+         return Lancamento.builder()
+                 .ano(2019)
+                 .mes(1)
+                 .descricao("Lancamento qualquer")
+                 .valor(BigDecimal.valueOf(10))
+                 .tipo(TipoLancamento.RECEITA)
+                 .status(StatusLancamento.PENDENTE)
+                 .dataCadastro(LocalDate.now())
+                 .build();
+     }
+
 
 }
