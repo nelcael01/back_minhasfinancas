@@ -3,6 +3,7 @@ package com.nelcael.minhasfinancas.service.implementacoes;
 import com.nelcael.minhasfinancas.exceptions.RegraNegocioException;
 import com.nelcael.minhasfinancas.model.entity.Lancamento;
 import com.nelcael.minhasfinancas.model.enuns.StatusLancamento;
+import com.nelcael.minhasfinancas.model.enuns.TipoLancamento;
 import com.nelcael.minhasfinancas.model.repository.LancamentoRepository;
 import com.nelcael.minhasfinancas.service.LancamentoService;
 import org.springframework.data.domain.Example;
@@ -79,10 +80,10 @@ public class LancamentoServiceImplementacao implements LancamentoService {
         if (lancamento.getUsuario() == null || lancamento.getUsuario().getId() == null) {
             throw new RegraNegocioException("Informe um Usuário válido");
         }
-        if (lancamento.getValor() == null || lancamento.getValor().compareTo(BigDecimal.ZERO) < 1){
+        if (lancamento.getValor() == null || lancamento.getValor().compareTo(BigDecimal.ZERO) < 1) {
             throw new RegraNegocioException("Informe um Valor válido");
         }
-        if (lancamento.getTipo() == null){
+        if (lancamento.getTipo() == null) {
             throw new RegraNegocioException("Informe um Tipo de Lançamento");
         }
     }
@@ -90,5 +91,20 @@ public class LancamentoServiceImplementacao implements LancamentoService {
     @Override
     public Optional<Lancamento> buscarPorId(Long id) {
         return repository.findById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public BigDecimal obterSaldoPorUsuario(Long id) {
+        BigDecimal receitas = repository.obterSaldoPorTipoLancamentoEUsuario(id, TipoLancamento.RECEITA.name());
+        BigDecimal despesas = repository.obterSaldoPorTipoLancamentoEUsuario(id, TipoLancamento.DESPESA.name());
+        if (receitas == null){
+            receitas = BigDecimal.ZERO;
+        }
+        if (despesas == null){
+            despesas = BigDecimal.ZERO;
+        }
+
+        return receitas.subtract(despesas);
     }
 }
