@@ -3,8 +3,6 @@ package com.nelcael.minhasfinancas.model.repository;
 import com.nelcael.minhasfinancas.model.entity.Lancamento;
 import com.nelcael.minhasfinancas.model.enuns.StatusLancamento;
 import com.nelcael.minhasfinancas.model.enuns.TipoLancamento;
-import static org.assertj.core.api.Assertions.*;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +12,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
@@ -62,8 +61,9 @@ public class LancamentoRepositoryTest {
         assertThat(lancamentoAtualizado.getMes()).isEqualTo(5);
         assertThat(lancamentoAtualizado.getDescricao()).isEqualTo("Teste Atualizado");
     }
+
     @Test
-    void deveEncontrarUmLancamentoPorId(){
+    void deveEncontrarUmLancamentoPorId() {
         Lancamento lancamentoSalvo = criarEPersistirUmLancamento();
         Optional<Lancamento> lancamentoBuscado = repository.findById(lancamentoSalvo.getId());
         assertThat(lancamentoBuscado.isPresent()).isTrue();
@@ -76,7 +76,7 @@ public class LancamentoRepositoryTest {
         return lancamentoSalvo;
     }
 
-    private Lancamento criarLancamento() {
+    public static Lancamento criarLancamento() {
         return Lancamento.builder()
                 .ano(2019)
                 .mes(1)
