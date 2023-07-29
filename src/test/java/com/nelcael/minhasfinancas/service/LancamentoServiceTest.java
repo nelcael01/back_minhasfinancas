@@ -7,6 +7,7 @@ import com.nelcael.minhasfinancas.model.repository.LancamentoRepository;
 import com.nelcael.minhasfinancas.model.repository.LancamentoRepositoryTest;
 import com.nelcael.minhasfinancas.service.implementacoes.LancamentoServiceImplementacao;
 import org.assertj.core.api.Assertions;
+import org.hibernate.criterion.Example;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -15,6 +16,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Arrays;
+import java.util.List;
 
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
@@ -99,6 +103,17 @@ public class LancamentoServiceTest {
         Mockito.verify(repository, Mockito.never()).save(lancamento);
     }
 
+//    @Test
+//    public void deveFiltrarLancamento() {
+//        Lancamento lancamento = LancamentoRepositoryTest.criarLancamento();
+//        lancamento.setId(1l);
+//
+//        List<Lancamento> lista = Arrays.asList(lancamento);
+//        Mockito.when( repository.findAll(Mockito.any(Example.class))).thenReturn(lista);
+//
+//        List<Lancamento> resultado = service.buscar(lancamento);
+//        Assertions.assertThat(resultado).isNotEmpty();
+//    }
 
 
 }
