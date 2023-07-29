@@ -73,13 +73,32 @@ public class LancamentoServiceTest {
 
     @Test
     public void naoDeveAtualizarUmLancamentoQuandoHouverErroDeValidacao() {
-        Lancamento lancamentoSalvo = LancamentoRepositoryTest.criarLancamento();
-        lancamentoSalvo.setId(1l);
-        Mockito.doThrow(RegraNegocioException.class).when(service).validar(lancamentoSalvo);
+        Lancamento lancamento = LancamentoRepositoryTest.criarLancamento();
+        lancamento.setId(1l);
+        Mockito.doThrow(RegraNegocioException.class).when(service).validar(lancamento);
 
-        Assertions.catchThrowableOfType(() -> service.atualizar(lancamentoSalvo), RegraNegocioException.class);
-        Mockito.verify(repository, Mockito.never()).save(lancamentoSalvo);
+        Assertions.catchThrowableOfType(() -> service.atualizar(lancamento), RegraNegocioException.class);
+        Mockito.verify(repository, Mockito.never()).save(lancamento);
     }
+
+    @Test
+    public void deveDeletarLancamento() {
+        Lancamento lancamento = LancamentoRepositoryTest.criarLancamento();
+        lancamento.setId(1l);
+
+        service.deletar(lancamento);
+
+        Mockito.verify(repository).delete(lancamento);
+    }
+
+    @Test
+    public void naoDeveDeletarUmLancamentoQueNãoFoiSalvo() {
+        Lancamento lancamento = LancamentoRepositoryTest.criarLancamento();
+
+        Assertions.catchThrowableOfType(() -> service.deletar(lancamento), NullPointerException.class);
+        Mockito.verify(repository, Mockito.never()).save(lancamento);
+    }
+
 
 
 }
