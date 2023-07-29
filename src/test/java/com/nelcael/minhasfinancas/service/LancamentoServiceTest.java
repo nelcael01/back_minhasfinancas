@@ -1,5 +1,6 @@
 package com.nelcael.minhasfinancas.service;
 
+import com.nelcael.minhasfinancas.exceptions.RegraNegocioException;
 import com.nelcael.minhasfinancas.model.entity.Lancamento;
 import com.nelcael.minhasfinancas.model.enuns.StatusLancamento;
 import com.nelcael.minhasfinancas.model.repository.LancamentoRepository;
@@ -42,7 +43,11 @@ public class LancamentoServiceTest {
 
     @Test
     public void naoDeveSalvarUmLancamentoQuandoHouverErroDeValidacao() {
+        Lancamento lancamentoASalvar = LancamentoRepositoryTest.criarLancamento();
+        Mockito.doThrow(RegraNegocioException.class).when(service).validar(lancamentoASalvar);
 
+        Assertions.catchThrowableOfType(() -> service.salvar(lancamentoASalvar), RegraNegocioException.class);
+        Mockito.verify(repository, Mockito.never()).save(lancamentoASalvar);
     }
 
 
