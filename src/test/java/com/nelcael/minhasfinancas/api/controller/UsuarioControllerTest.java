@@ -3,6 +3,7 @@ package com.nelcael.minhasfinancas.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nelcael.minhasfinancas.api.dto.UsuarioDTO;
 import com.nelcael.minhasfinancas.exceptions.ErroAutenticacao;
+import com.nelcael.minhasfinancas.exceptions.RegraNegocioException;
 import com.nelcael.minhasfinancas.model.entity.Usuario;
 import com.nelcael.minhasfinancas.service.LancamentoService;
 import com.nelcael.minhasfinancas.service.UsuarioService;
@@ -100,4 +101,20 @@ public class UsuarioControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("email").value(usuarioSalvo.getEmail()));
     }
 
+    @Test
+    public void deveRetornarBadRequestAoTentarSalvarUmUsuario() throws Exception {
+        UsuarioDTO dto = UsuarioDTO.builder().nome("Nelcael").email("email@gmail.com").senha("senha").build();
+        Mockito.when(service.salvarUsuario(Mockito.any(Usuario.class))).thenThrow(RegraNegocioException.class);
+        String json = new ObjectMapper().writeValueAsString(dto);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(API)
+                .accept(JSON)
+                .contentType(JSON)
+                .content(json);
+
+        mvc
+                .perform(request)
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
 }
