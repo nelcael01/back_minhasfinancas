@@ -2,6 +2,7 @@ package com.nelcael.minhasfinancas.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nelcael.minhasfinancas.api.dto.UsuarioDTO;
+import com.nelcael.minhasfinancas.exceptions.ErroAutenticacao;
 import com.nelcael.minhasfinancas.model.entity.Usuario;
 import com.nelcael.minhasfinancas.service.LancamentoService;
 import com.nelcael.minhasfinancas.service.UsuarioService;
@@ -57,5 +58,24 @@ public class UsuarioControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("id").value(usuario.getId()))
                 .andExpect(MockMvcResultMatchers.jsonPath("nome").value(usuario.getNome()))
                 .andExpect(MockMvcResultMatchers.jsonPath("email").value(usuario.getEmail()));
+    }
+
+    @Test
+    public void deveLancarUmErroAoAutenticarUmUsuario() throws Exception {
+        String email = "email@gmail.com";
+        String senha = "senha";
+        UsuarioDTO dto = UsuarioDTO.builder().nome("Nelcael").email(email).senha(senha).build();
+        Mockito.when(service.autenticar(email, senha)).thenThrow(ErroAutenticacao.class);
+        String json = new ObjectMapper().writeValueAsString(dto);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(API.concat("/autenticar"))
+                .accept(JSON)
+                .contentType(JSON)
+                .content(json);
+
+        mvc
+                .perform(request)
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 }
