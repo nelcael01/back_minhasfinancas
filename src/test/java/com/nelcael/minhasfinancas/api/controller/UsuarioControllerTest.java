@@ -78,4 +78,26 @@ public class UsuarioControllerTest {
                 .perform(request)
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
+
+    @Test
+    public void deveSalvarUmUsuario() throws Exception {
+        UsuarioDTO dto = UsuarioDTO.builder().nome("Nelcael").email("email@gmail.com").senha("senha").build();
+        Usuario usuarioSalvo = Usuario.builder().id(1l).email("email@gmail.com").senha("senha").build();
+        Mockito.when(service.salvarUsuario(Mockito.any(Usuario.class))).thenReturn(usuarioSalvo);
+        String json = new ObjectMapper().writeValueAsString(dto);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(API)
+                .accept(JSON)
+                .contentType(JSON)
+                .content(json);
+
+        mvc
+                .perform(request)
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("id").value(usuarioSalvo.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("nome").value(usuarioSalvo.getNome()))
+                .andExpect(MockMvcResultMatchers.jsonPath("email").value(usuarioSalvo.getEmail()));
+    }
+
 }
