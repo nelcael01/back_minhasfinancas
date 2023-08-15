@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -49,10 +50,10 @@ public class LancamentoController {
     }
 
     @PutMapping("{id}/atualizar-status")
-    public ResponseEntity atualizarStatus(@PathVariable("id") Long id ,@RequestBody AtualizarStatusDTO dto){
+    public ResponseEntity atualizarStatus(@PathVariable("id") Long id, @RequestBody AtualizarStatusDTO dto) {
         return service.buscarPorId(id).map(entity -> {
             StatusLancamento statusSelecionado = StatusLancamento.valueOf(dto.getStatus());
-            if (statusSelecionado == null){
+            if (statusSelecionado == null) {
                 return ResponseEntity.badRequest().body("Status inválido");
             }
             try {
@@ -96,6 +97,27 @@ public class LancamentoController {
         }
         List<Lancamento> listBuscados = service.buscar(lancamentoFiltro);
         return ResponseEntity.ok().body(listBuscados);
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity obterLancamento(@PathVariable("id") Long id) {
+        return service.buscarPorId(id)
+                .map( lancamento ->
+                    new ResponseEntity(converter(lancamento), HttpStatus.OK)
+                ).orElseGet(() -> new ResponseEntity(HttpStatus.NOT_FOUND));
+    }
+
+    private LancamentoDTO converter(Lancamento lancamento){
+        LancamentoDTO lancamentoDTO = new LancamentoDTO();
+        lancamentoDTO.setId(lancamento.getId());
+        lancamentoDTO.setAno(lancamento.getAno());
+        lancamentoDTO.setTipo(lancamento.getTipo().name());
+        lancamentoDTO.setMes(lancamento.getMes());
+        lancamentoDTO.setStatus(lancamento.getStatus().name());
+        lancamentoDTO.setDescricao(lancamento.getDescricao());
+        lancamentoDTO.setUsuario(lancamento.getUsuario().getId());
+        lancamentoDTO.setValor(lancamento.getValor());
+        return lancamentoDTO;
     }
 
     private Lancamento converter(LancamentoDTO dto) {
