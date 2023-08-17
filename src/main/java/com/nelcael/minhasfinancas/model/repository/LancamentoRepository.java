@@ -1,5 +1,6 @@
 package com.nelcael.minhasfinancas.model.repository;
 
+import com.nelcael.minhasfinancas.model.enuns.StatusLancamento;
 import com.nelcael.minhasfinancas.model.enuns.TipoLancamento;
 import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,9 +22,12 @@ public interface LancamentoRepository extends JpaRepository<Lancamento, Long> {
     Optional<Lancamento> findById(Long id);
 
     @Query(value = "select sum(l.valor) from Lancamento l join l.usuario u" +
-            " where u.id = :idUsuario" +
+            " where u.id =:idUsuario" +
             " and l.tipo =:tipo" +
-            " and l.status = 'EFETIVADO'" +
+            " and l.status =:status" +
             " group by u")
-    BigDecimal obterSaldoPorTipoLancamentoEUsuario(@Param("idUsuario") Long idUsuario, @Param("tipo") TipoLancamento tipo);
+    BigDecimal obterSaldoPorTipoLancamentoEUsuarioEStatus(
+            @Param("idUsuario") Long idUsuario,
+            @Param("tipo") TipoLancamento tipo,
+            @Param("status")StatusLancamento status);
 }
